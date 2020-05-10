@@ -1,0 +1,166 @@
+<html>
+  <head> </head>
+  <body>
+    <select id="category">
+      <option>Select</option>
+      <option value="Temperature">Temperature</option>
+      <option value="Humidity">Humidity</option>
+      <option value="Light">Light</option>
+      <option value="CO2">CO2</option>
+      <option value="HumidityRatio">HumidityRatio</option>
+      <option value="Occupancy">Occupancy</option>
+    </select>
+    <div width="100px" height="100px">
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script>
+      var ctx = null;
+      var DataSet = null;
+      var FilteredDate = [];
+      var FilterdTemp = [];
+      var FilterdHumidity = [];
+      var FilteredLight = [];
+      var FilteredCO2 = [];
+      var FilteredHumidityRatio = [];
+      var FilteredOccupancy = [];
+      $(document).ready(function () {
+        ctx = document.getElementById("myChart").getContext("2d");
+        ReadData();
+        //FilterDate();
+      });
+
+      function ReadData() {
+        $.get("/readData", function (data) {
+          DataSet = data;
+        }).done(function () {
+          FilterDate();
+        });
+      }
+
+      function FilterDate() {
+        var k = 1;
+        for (var i = 0; i < 20; i++) {
+          FilteredDate.push(DataSet[k]);
+          k = k + 8;
+        }
+      }
+
+      function FilterTemprature() {
+        var k = 2;
+        for (var i = 0; i < 20; i++) {
+          FilterdTemp.push(DataSet[k]);
+          k = k + 8;
+        }
+        DrawChart(FilterdTemp, "Temperature");
+      }
+
+      function FilterHumidity() {
+        var k = 3;
+        for (var i = 0; i < 20; i++) {
+          FilterdHumidity.push(DataSet[k]);
+          k = k + 8;
+        }
+        DrawChart(FilterdHumidity, "Humidity");
+      }
+
+      function FilterLight() {
+        var k = 4;
+        for (var i = 0; i < 20; i++) {
+          FilteredLight.push(DataSet[k]);
+          k = k + 8;
+        }
+        DrawChart(FilteredLight, "Light");
+      }
+
+      function FilterCO2() {
+        var k = 5;
+        for (var i = 0; i < 20; i++) {
+          FilteredCO2.push(DataSet[k]);
+          k = k + 8;
+        }
+        DrawChart(FilteredCO2, "C02");
+      }
+
+      function FilterHumidityRatio() {
+        var k = 6;
+        for (var i = 0; i < 20; i++) {
+          FilteredHumidityRatio.push(DataSet[k]);
+          k = k + 8;
+        }
+        DrawChart(FilteredHumidityRatio, "Humidity Ratio");
+      }
+
+      function FilterOccupancy() {
+        var k = 7;
+        for (var i = 0; i < 20; i++) {
+          FilteredOccupancy.push(DataSet[k]);
+          k = k + 8;
+        }
+        DrawChart(FilteredOccupancy, "Occupancy");
+      }
+
+      function DrawChart(data, label) {
+        myChart = null;
+        var myChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: FilteredDate,
+            datasets: [
+              {
+                label: label,
+                data: data,
+                backgroundColor: [
+                  "rgba(255, 99, 132, 0.2)",
+                  "rgba(54, 162, 235, 0.2)",
+                  "rgba(255, 206, 86, 0.2)",
+                  "rgba(75, 192, 192, 0.2)",
+                  "rgba(153, 102, 255, 0.2)",
+                  "rgba(255, 159, 64, 0.2)",
+                ],
+                borderColor: [
+                  "rgba(255, 99, 132, 1)",
+                  "rgba(54, 162, 235, 1)",
+                  "rgba(255, 206, 86, 1)",
+                  "rgba(75, 192, 192, 1)",
+                  "rgba(153, 102, 255, 1)",
+                  "rgba(255, 159, 64, 1)",
+                ],
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+              ],
+            },
+          },
+        });
+      }
+
+      $("#category").change(function () {
+        if ($("#category").val() == "Temperature") {
+          FilterTemprature();
+        } else if ($("#category").val() == "Humidity") {
+          FilterHumidity();
+        } else if ($("#category").val() == "Light") {
+          FilterLight();
+        } else if ($("#category").val() == "CO2") {
+          FilterCO2();
+        } else if ($("#category").val() == "HumidityRatio") {
+          FilterHumidityRatio();
+        } else if ($("#category").val() == "Occupancy") {
+          FilterOccupancy();
+        }
+      });
+    </script>
+  </body>
+</html>
